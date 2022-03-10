@@ -2,6 +2,7 @@ package me.betterConsole.cmd;
 
 public class Console {
 
+    //<editor-fold desc="Variables">
     private static java.io.BufferedWriter     writeBufferedWriter;
     private static java.io.BufferedWriter     errorBufferedWriter;
     private static java.text.SimpleDateFormat simpleDateFormat;
@@ -11,7 +12,9 @@ public class Console {
     private static long                       timer;
     private static String                     pattern;
     private static java.util.Locale           locale;
+    //</editor-fold>
 
+    //<editor-fold desc="Printing to console">
     public static void print(final Object message) {
         write(getTimeFormatted() + ": " + message + "\n");
     }
@@ -37,7 +40,9 @@ public class Console {
             e.printStackTrace();
         }
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Utility methods">
     private static void check() {
         if(! shutdownHookAdded) createShutdownHook();
         checkFlush();
@@ -47,7 +52,9 @@ public class Console {
         Runtime.getRuntime().addShutdownHook(new Thread(Console::flushAll));
         shutdownHookAdded = true;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Buffered Writer Flush">
     private static void checkFlush() {
         if(System.currentTimeMillis() - timer < 1000L) return;
         timer = System.currentTimeMillis();
@@ -74,22 +81,41 @@ public class Console {
             exception.printStackTrace();
         }
     }
+    //</editor-fold>
 
-    private static String getTimeFormatted() {
-        return "[" + getSimpleDateFormat().format(getDate()) + "]";
+    //<editor-fold desc="Buffered Writer">
+    //<editor-fold desc="'Write' Buffered Writer">
+    private static java.io.BufferedWriter getWriteBufferedWriter() {
+        if(Console.writeBufferedWriter == null) Console.writeBufferedWriter = createWriteBufferedWriter();
+        return Console.writeBufferedWriter;
     }
 
-    private static java.util.Date getDate() {
-        return new java.util.Date();
+    private static java.io.BufferedWriter createWriteBufferedWriter() {
+        return new java.io.BufferedWriter(new java.io.OutputStreamWriter(new java.io.FileOutputStream(java.io.FileDescriptor.out), getCharsets()), getOutputBufferSize());
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="'Error' Buffered Writer">
+    private static java.io.BufferedWriter getErrorBufferedWriter() {
+        if(Console.errorBufferedWriter == null) Console.errorBufferedWriter = createErrorBufferedWriter();
+        return Console.errorBufferedWriter;
     }
 
-    private static java.text.SimpleDateFormat getSimpleDateFormat() {
-        if(Console.simpleDateFormat == null) Console.simpleDateFormat = createSimpleDateFormat();
-        return Console.simpleDateFormat;
+    private static java.io.BufferedWriter createErrorBufferedWriter() {
+        return new java.io.BufferedWriter(new java.io.OutputStreamWriter(new java.io.FileOutputStream(java.io.FileDescriptor.err), getCharsets()), getOutputBufferSize());
+    }
+    //</editor-fold>
+    //</editor-fold>
+
+    //<editor-fold desc="Get Handlers">
+    private static java.nio.charset.Charset getCharsets() {
+        if(Console.charsets == null) Console.charsets = java.nio.charset.StandardCharsets.US_ASCII;
+        return Console.charsets;
     }
 
-    private static java.text.SimpleDateFormat createSimpleDateFormat() {
-        return new java.text.SimpleDateFormat(getPattern(), getLocale());
+    private static int getOutputBufferSize() {
+        if(Console.outputBufferSize <= 0) Console.outputBufferSize = 512;
+        return Console.outputBufferSize;
     }
 
     private static String getPattern() {
@@ -102,33 +128,17 @@ public class Console {
         return Console.locale;
     }
 
-    private static java.io.BufferedWriter getWriteBufferedWriter() {
-        if(Console.writeBufferedWriter == null) Console.writeBufferedWriter = createWriteBufferedWriter();
-        return Console.writeBufferedWriter;
+    private static String getTimeFormatted() {
+        return "[" + getSimpleDateFormat().format(getDate()) + "]";
     }
 
-    private static java.io.BufferedWriter createWriteBufferedWriter() {
-        return new java.io.BufferedWriter(new java.io.OutputStreamWriter(new java.io.FileOutputStream(java.io.FileDescriptor.out), getCharsets()), getOutputBufferSize());
+    private static java.util.Date getDate() {
+        return new java.util.Date();
     }
 
-    private static java.io.BufferedWriter getErrorBufferedWriter() {
-        if(Console.errorBufferedWriter == null) Console.errorBufferedWriter = createErrorBufferedWriter();
-        return Console.errorBufferedWriter;
+    private static java.text.SimpleDateFormat getSimpleDateFormat() {
+        if(Console.simpleDateFormat == null) Console.simpleDateFormat = new java.text.SimpleDateFormat(getPattern(), getLocale());
+        return Console.simpleDateFormat;
     }
-
-    private static java.io.BufferedWriter createErrorBufferedWriter() {
-        return new java.io.BufferedWriter(new java.io.OutputStreamWriter(new java.io.FileOutputStream(java.io.FileDescriptor.err), getCharsets()), getOutputBufferSize());
-    }
-
-    private static java.nio.charset.Charset getCharsets() {
-        if(Console.charsets == null) Console.charsets = java.nio.charset.StandardCharsets.US_ASCII;
-        return Console.charsets;
-    }
-
-    private static int getOutputBufferSize() {
-        if(Console.outputBufferSize <= 0) Console.outputBufferSize = 512;
-        return Console.outputBufferSize;
-    }
-
-
+    //</editor-fold>
 }
