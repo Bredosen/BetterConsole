@@ -24,31 +24,31 @@ public class Console {
     //<editor-fold desc="Printing to console">
     // Printing message to console, with time formatted at start, and new line at end.
     public static void print(final Object message) {
-        write(getTimeFormatted() + ": " + message + "\n");
+        write(getTimeFormatted() + ": " + message + "\n"); // Write to console, with time formatting.
     }
 
     // Printing error message to console, with time formatted at start, and new line at end.
     public static void error(final Object errorMessage) {
-        writeError(getTimeFormatted() + ": " + errorMessage + "\n");
+        writeError(getTimeFormatted() + ": " + errorMessage + "\n"); // Write error to console, with time formatting.
     }
 
     // Writing message to console.
     public static void write(final Object message) {
         try {
-            getWriteBufferedWriter().write(message.toString());
-            check();
-        } catch(java.io.IOException e) {
-            e.printStackTrace();
+            getWriteBufferedWriter().write(message.toString()); // Write to console.
+            check(); // Check flush for buffered-writers.
+        } catch(java.io.IOException ioException) {
+            ioException.printStackTrace(); // Print error to console.
         }
     }
 
     // Writing error message to console.
     public static void writeError(final Object errorMessage) {
         try {
-            getErrorBufferedWriter().write(errorMessage.toString());
-            check();
-        } catch(java.io.IOException e) {
-            e.printStackTrace();
+            getErrorBufferedWriter().write(errorMessage.toString()); // Write error to console.
+            check(); // Check flush for buffered-writers.
+        } catch(java.io.IOException ioException) {
+            ioException.printStackTrace(); // Print error to console.
         }
     }
     //</editor-fold>
@@ -101,31 +101,27 @@ public class Console {
     //</editor-fold>
 
     //<editor-fold desc="Buffered Writer">
-    //<editor-fold desc="'Write' Buffered Writer">
     // Get 'Write' BufferedWriter, if BufferedWriter is null create new.
     private static java.io.BufferedWriter getWriteBufferedWriter() {
         if(Console.writeBufferedWriter == null) Console.writeBufferedWriter = createWriteBufferedWriter();
         return Console.writeBufferedWriter;
     }
 
-    // Create new 'Write' BufferedWriter.
-    private static java.io.BufferedWriter createWriteBufferedWriter() {
-        return new java.io.BufferedWriter(new java.io.OutputStreamWriter(new java.io.FileOutputStream(java.io.FileDescriptor.out), getCharsets()), getOutputBufferSize());
-    }
-    //</editor-fold>
-
-    //<editor-fold desc="'Error' Buffered Writer">
     // Get 'Error' BufferedWriter, if BufferedWriter is null create new.
     private static java.io.BufferedWriter getErrorBufferedWriter() {
         if(Console.errorBufferedWriter == null) Console.errorBufferedWriter = createErrorBufferedWriter();
         return Console.errorBufferedWriter;
     }
 
+    // Create new 'Write' BufferedWriter.
+    private static java.io.BufferedWriter createWriteBufferedWriter() {
+        return new java.io.BufferedWriter(new java.io.OutputStreamWriter(new java.io.FileOutputStream(java.io.FileDescriptor.out), getCharsets()), getOutputBufferSize());
+    }
+
     // Create new 'Error' BufferedWriter.
     private static java.io.BufferedWriter createErrorBufferedWriter() {
         return new java.io.BufferedWriter(new java.io.OutputStreamWriter(new java.io.FileOutputStream(java.io.FileDescriptor.err), getCharsets()), getOutputBufferSize());
     }
-    //</editor-fold>
     //</editor-fold>
 
     //<editor-fold desc="Get Handlers">

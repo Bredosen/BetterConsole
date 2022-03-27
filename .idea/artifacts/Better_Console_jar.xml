@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Better Console:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Better_Console_jar</output-path>
+    <root id="archive" name="Better Console.jar">
+      <element id="module-output" name="Better Console" />
+    </root>
+  </artifact>
+</component>
